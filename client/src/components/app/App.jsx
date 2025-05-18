@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import Backlog from "./Backlog.jsx";
-import Pagination from "./Pagination.jsx";
 
 function App() {
   const [tasks, setTasks] = useState([]);
