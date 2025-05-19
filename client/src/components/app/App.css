@@ -1,0 +1,27 @@
+section {
+  margin: 0 auto;
+  max-width: 50rem;
+  padding: 3rem;
+  margin-top: 3rem;
+  border-radius: 0.5rem;
+  background-color: hsl(0, 0%, 93%);
+  box-shadow: 0.5rem 1rem hsla(0, 0%, 66%, 0.748);
+  color: black;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 2rem 0 -1rem 2rem;
+} */
+
+td {
+  margin-bottom: 0.5rem;
+}

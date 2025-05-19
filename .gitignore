@@ -157,5 +157,3 @@ server/dist
 server/build
 server/.strapi-updater.json
 server/.strapi-cloud.json
-
-*front-end
