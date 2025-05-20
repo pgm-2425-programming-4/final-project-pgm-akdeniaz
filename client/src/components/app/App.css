@@ -10,18 +10,31 @@ section {
 }
 
 h1 {
-  font-size: 2.5rem;
+  font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 1rem;
   text-align: center;
 }
 
-/* h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 2rem 0 -1rem 2rem;
-} */
+table {
+  margin: 2rem;
+}
 
 td {
   margin-bottom: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  button.pagination-link {
+    color: black;
+  }
+
+  button.pagination-link.is-current {
+    color: white;
+  }
+
+  button.pagination-previous,
+  button.pagination-next {
+    color: black;
+  }
 }
