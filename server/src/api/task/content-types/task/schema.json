@@ -17,15 +17,15 @@
       "minLength": 3,
       "maxLength": 100
     },
-    "description": {
-      "type": "richtext",
-      "required": true,
-      "minLength": 10
-    },
     "task_status": {
       "type": "relation",
       "relation": "oneToOne",
       "target": "api::task-status.task-status"
+    },
+    "projects": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::project.project"
     }
   }
 }
