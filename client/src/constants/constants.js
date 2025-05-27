@@ -1,7 +1,7 @@
 export const API_URL = import.meta.env.PROD
   ? "https://jammin-playground.onrender.com/api"
   : "http://localhost:1337/api";
-export const API_TOKEN =import.meta.env.PROD
-  ? "PROD token"
+export const API_TOKEN = import.meta.env.PROD
+  ? "719d1074cd669b1c2f2e1b901f8505d6420bd47cd9c81beef19ffd2a2ac2b1ea7cc2e5369a49404ca3328a8851905c2adacbeaf60857cae39e8801251ba4e8dc5faca77b1f5ffca2e24b50fbf522e589b7e2023fd6fdd6cb4ca67acd0bf51e1e7f12ca985182981862f7af6a2f4d9143280b7dca6a4d27bb42084e3bee391088"
   : "a78b19ea610f99913032e6eeb0108b63cff073b48984a3eed283d670339c3adbcaac1edf487b688f89de02b8b51bfacdf74a27b68be3e1f99f6d9fc8fa104caaedf97ede5a651d5ed6e0eebe2c73da1c58a80b7b7ebcdad4a6ac85329ba87116e695cb5e91734db3d85514dd72be1894393ad361ab9f8b504a4023ee500a6902";
 export const PAGE_SIZE_OPTIONS = [5, 10, 25, 50];
