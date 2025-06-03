@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "labels",
+  "info": {
+    "singularName": "label",
+    "pluralName": "labels",
+    "displayName": "Labels",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "tasks": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::task.task",
+      "inversedBy": "labels"
+    }
+  }
+}

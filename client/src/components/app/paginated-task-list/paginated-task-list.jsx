@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { fetchTasks } from "../../../data/fetchTasks";
 import { TaskList } from "./task-list/task-list";
 import { Pagination } from "./pagination/pagination";
@@ -7,9 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function PaginatedTaskList() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageCount, setPageCount] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
-  const [tasks, setTasks] = useState([]);
 
   function handlePageChanged(pageNumber) {
     setCurrentPage(pageNumber);
@@ -19,30 +17,13 @@ export function PaginatedTaskList() {
     setPageSize(size);
   }
 
-  const { isPending, isError, error, data } = useQuery({
+  const { data } = useQuery({
     queryKey: ["tasks", { currentPage, pageSize }],
     queryFn: () => fetchTasks(currentPage, pageSize),
   });
 
-  useEffect(() => {
-    if (data) {
-      if (currentPage > data.meta.pagination.pageCount) {
-        setCurrentPage(data.meta.pagination.pageCount);
-      }
-      setTasks(data.data);
-      setPageCount(data.meta.pagination.pageCount);
-    }
-  }, [data, currentPage]);
-
-  if (isPending) {
-    return <span>Loading...</span>;
-  }
-
-  if (isError) {
-    return <span>Error: {error.message}</span>;
-  }
-
-  // At this point we can assume data is not falsy
+  const tasks = data?.data || [];
+  const pageCount = data?.meta?.pagination?.pageCount || 1;
 
   return (
     <>

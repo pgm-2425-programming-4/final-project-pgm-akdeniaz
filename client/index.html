@@ -7,18 +7,32 @@
   </head>
   <body>
     <!-- NAVBAR -->
-    <!-- <nav className="navbar is-primary">
-      <div className="navbar-menu is-active">
-        <div className="navbar-start">
-          <a className="navbar-item" href="#">PGM4</a>
+    <aside class="sidebar column is-2 has-background-light">
+      <div class="menu p-4">
+        <p class="menu-label">Projects</p>
+        <ul class="menu-list">
+          <li><a>PGM4</a></li>
+          <li><a>ATWORK2</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- HEADER -->
+    <section class="section">
+      <div class="container has-text-centered">
+        <h1 class="title">Active project: PGM4</h1>
+        <div class="buttons is-centered mt-4">
+          <button class="button is-success">Add new task</button>
+          <button id="toggle-backlog" class="button is-info">
+            View backlog
+          </button>
         </div>
       </div>
-    </nav> -->
+    </section>
 
-    <!-- SECTIONS -->
-    <section>
-      <h1>Backlog for PGM4</h1>
-      <div id="root"></div>
+    <!-- BACKLOG ROOT -->
+    <section class="section">
+      <div id="root" class="container" style="display: none"></div>
     </section>
 
     <script type="module" src="/src/main.jsx"></script>
