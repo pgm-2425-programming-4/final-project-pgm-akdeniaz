@@ -11,7 +11,7 @@
       <div class="menu p-4">
         <p class="menu-label">Projects</p>
         <ul class="menu-list">
-          <li><a>PGM4</a></li>
+          <li><a>PGM3</a></li>
           <li><a>ATWORK2</a></li>
         </ul>
       </div>
@@ -20,7 +20,7 @@
     <!-- HEADER -->
     <section class="section">
       <div class="container has-text-centered">
-        <h1 class="title">Active project: PGM4</h1>
+        <h1 class="title">Active project: </h1>
         <div class="buttons is-centered mt-4">
           <button class="button is-success">Add new task</button>
           <button id="toggle-backlog" class="button is-info">
@@ -36,5 +36,14 @@
     </section>
 
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      document
+        .getElementById("toggle-backlog")
+        .addEventListener("click", () => {
+          const rootEl = document.getElementById("root");
+          rootEl.style.display =
+            rootEl.style.display === "none" ? "block" : "none";
+        });
+    </script>
   </body>
 </html>
