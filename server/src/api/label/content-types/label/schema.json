@@ -11,7 +11,7 @@
     "draftAndPublish": true
   },
   "attributes": {
-    "label": {
+    "name": {
       "type": "string",
       "required": true
     },

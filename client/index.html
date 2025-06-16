@@ -9,18 +9,41 @@
     <!-- NAVBAR -->
     <aside class="sidebar column is-2 has-background-light">
       <div class="menu p-4">
-        <p class="menu-label">Projects</p>
-        <ul class="menu-list">
-          <li><a>PGM3</a></li>
-          <li><a>ATWORK2</a></li>
+        <p class="menu__label">
+          Your projects <span class="menu__label--add">+</span>
+        </p>
+        <ul class="menu__list">
+          <li class="menu__item menu__item--selected">
+            <a class="menu__link">PGM4</a>
+          </li>
+          <li class="menu__item"><a class="menu__link">ATWORK2</a></li>
         </ul>
       </div>
     </aside>
 
+    <section class="modal">
+      <div class="modal__container">
+        <header class="modal__header">
+          <h2 class="modal__title">Close project?</h2>
+          <button class="modal__close-button" aria-label="Close popover">
+            x
+          </button>
+        </header>
+        <div class="modal__footer">
+          <button
+            class="modal__action-button modal__action-button--danger"
+            type="button"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </section>
+
     <!-- HEADER -->
     <section class="section">
       <div class="container has-text-centered">
-        <h1 class="title">Active project: </h1>
+        <h1 class="title">Active project:</h1>
         <div class="buttons is-centered mt-4">
           <button class="button is-success">Add new task</button>
           <button id="toggle-backlog" class="button is-info">
