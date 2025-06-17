@@ -30,10 +30,10 @@
     "description": {
       "type": "text"
     },
-    "labels": {
+    "tags": {
       "type": "relation",
       "relation": "manyToMany",
-      "target": "api::label.label",
+      "target": "api::tag.tag",
       "mappedBy": "tasks"
     }
   }

@@ -1,52 +1,37 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { fetchProjectById } from "../../queries/fetch-project-by-id";
+import { fetchTasks } from "../../data/fetchTasks";
 
 export const Route = createFileRoute("/projects/$projectId")({
   loader: async ({ params }) => {
-    const data = await fetchProjectById(params.projectId);
-    if (!data) {
-      throw notFound();
-    }
-    return data;
+    const project = await fetchProjectById(params.projectId);
+    const tasks = await fetchTasks(1, 10);
+    if (!project) throw notFound();
+    return { project, tasks };
   },
   component: RouteComponent,
-  notFoundComponent: () => <div>Project not found</div>,
 });
 
 function RouteComponent() {
-  const data = Route.useLoaderData();
+  const { project, tasks } = Route.useLoaderData();
+
   return (
     <div>
-      <p>{data.name}</p>
-      <p>
-        {data.address.street} {data.address.suite}
-      </p>
-      <p>
-        {data.address.zipcode}, {data.address.city}
-      </p>
-      <p>
-        <a href={`https://${data.website}`} target="_blank">
-          {data.website}
-        </a>
-      </p>
-      <p>
-        <a href={`mailto: ${data.email}`}>{data.email}</a>
-      </p>
-      <p>
-        <a href={`tel: ${data.phone}`}>{data.phone}</a>
-      </p>
+      <h1 className="text-2xl font-bold">{project.attributes.project}</h1>
+      <p>ID: {project.id}</p>
 
+      <h2 className="text-xl font-bold">Tasks</h2>
       <ul>
-        <li>
-          <Link to="/projects/$projectId/posts" params={{ projectId: data.id }}>
-            Posts
-          </Link>
-        </li>
-        <li>
-          <Link to="/projects/$projectId/albums" params={{ projectId: data.id }}>
-            Albums
-          </Link>
-        </li>
+        {tasks.map((task) => (
+          <li key={task.id}>
+            <Link
+              to="/projects/$projectId/tasks/$taskId"
+              params={{ projectId: project.id, taskId: task.id }}
+            >
+              {task.attributes.title}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );

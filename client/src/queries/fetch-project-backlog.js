@@ -1,6 +1,6 @@
-export async function fetchProjectAlbums(projectId) {
+export async function fetchProjectBacklog(projectId) {
   const response = await fetch(
-    `https://jsonplaceholder.typicode.com/projects/${projectId}/albums`
+    `https://jsonplaceholder.typicode.com/projects/${projectId}/backlog`
   );
   if (!response.ok) {
     throw new Error(

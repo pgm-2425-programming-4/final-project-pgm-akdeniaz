@@ -8,13 +8,10 @@ function About() {
   return (
     <div className="p-2">
       <p>
-        Deze applicatie is ontwikkeld als oefening binnen het
-        opleidingsonderdeel PGM4 aan Arteveldehogeschool. Het doel is om een
-        interactieve taakbeheerapp te bouwen met behulp van TanStack Router en
-        een Kanban-bord.
+        💻 Junior Web Developer | HTML, CSS, JavaScript | 🚀 Learning React &
+        Strapi | 🌱 Building projects and growing every day
       </p>
       <p className="about-name">Akdenis Niaziev</p>
-      <a href="https://www.linkedin.com/in/akdenis-niaziev/">LinkedIn</a>
     </div>
   );
 }
