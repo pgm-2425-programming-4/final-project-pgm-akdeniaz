@@ -1,15 +1,9 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { routeTree } from "../../routeTree.gen.ts";
 import "./App.css";
-import { PaginatedTaskList } from "./paginated-task-list/paginated-task-list";
 
-const queryClient = new QueryClient();
+const router = createRouter({ routeTree });
 
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-        <PaginatedTaskList />
-    </QueryClientProvider>
-  );
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;

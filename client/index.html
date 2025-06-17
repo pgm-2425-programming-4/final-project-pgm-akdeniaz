@@ -1,49 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>Jammin'</title>
   </head>
   <body>
-    <!-- NAVBAR -->
-    <aside class="sidebar column is-2 has-background-light">
-      <div class="menu p-4">
-        <p class="menu-label">Projects</p>
-        <ul class="menu-list">
-          <li><a>PGM3</a></li>
-          <li><a>ATWORK2</a></li>
-        </ul>
-      </div>
-    </aside>
-
-    <!-- HEADER -->
-    <section class="section">
-      <div class="container has-text-centered">
-        <h1 class="title">Active project: </h1>
-        <div class="buttons is-centered mt-4">
-          <button class="button is-success">Add new task</button>
-          <button id="toggle-backlog" class="button is-info">
-            View backlog
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- BACKLOG ROOT -->
-    <section class="section">
-      <div id="root" class="container" style="display: none"></div>
-    </section>
-
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      document
-        .getElementById("toggle-backlog")
-        .addEventListener("click", () => {
-          const rootEl = document.getElementById("root");
-          rootEl.style.display =
-            rootEl.style.display === "none" ? "block" : "none";
-        });
-    </script>
   </body>
 </html>
