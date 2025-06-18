@@ -1,19 +1,38 @@
-.sidebar-link {
-  display: block;
-  margin-left: 1rem;
-  color: #363636;
-  text-decoration: none;
-  padding: 0.25rem 0;
-  transition: color 0.2s ease;
+@import "../../routes/projects/_projectId.css";
+@import url("../../routes/projects/$projectId/backlog.css");
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
 }
 
-.sidebar-link:hover {
-  text-decoration: underline;
-  color: #3273dc;
+main {
+  padding: 2rem;
 }
 
-.sidebar-link.active {
+.task-column-header {
   text-decoration: underline;
-  font-weight: bold;
-  color: #3273dc;
+  text-underline-offset: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.box {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1rem;
+}
+
+a.active {
+  text-decoration: underline;
+  text-underline-offset: 0.25rem;
+}
+
+.menu {
+  padding: 2rem;
+  border-right: 1px solid black;
+  min-height: 100vh;
+}
+
+.menu-list li {
+  padding: 0.5rem;
 }

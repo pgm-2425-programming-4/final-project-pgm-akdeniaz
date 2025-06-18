@@ -1,31 +1,82 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
-import SidebarLink from "../components/SidebarLink.tsx";
-import Header from "../components/Header.tsx";
+import { useEffect, useState } from "react";
+import { createRootRoute, Outlet, Link } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { API_URL, API_TOKEN } from "../constants/constants.js";
 
 export const Route = createRootRoute({
   component: RootLayout,
 });
 
 function RootLayout() {
+  const [projects, setProjects] = useState([]);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const res = await fetch(`${API_URL}/projects`, {
+          headers: {
+            Authorization: `Bearer ${API_TOKEN}`,
+          },
+        });
+        const json = await res.json();
+        setProjects(json.data || []);
+      } catch (err) {
+        console.error("Failed to fetch projects", err);
+      }
+    }
+
+    fetchProjects();
+  }, []);
+
   return (
-    <div className="columns is-gapless is-fullheight">
-      <aside className="column is-3 menu has-background-light p-4">
-        <nav className="menu-list">
-          <SidebarLink to="/" label="Home" />
+    <div className="wrapper">
+      <aside className="menu">
+        <ul className="menu-list">
+          <li>
+            <Link
+              to="/"
+              activeProps={{ className: "active", "aria-current": "page" }}
+            >
+              Home
+            </Link>
+          </li>
+        </ul>
 
-          <p className="menu-label">Projects</p>
-          <SidebarLink to="r4vypj5p1akq7gt3f265ygm4" label="PGM4" />
-          <SidebarLink to="xypo5tg3vdhvryz3pv7v41jv" label="AtWork2" />
+        <p className="menu-label">Projects</p>
+        <ul className="menu-list">
+          {projects.map((project) => {
+            const id = project.documentId;
+            const name = project.project;
 
-          <p className="menu-label">Info</p>
-          <SidebarLink to="/about" label="About" />
-          <SidebarLink to="/contact" label="Contact" />
-        </nav>
+            return (
+              <li key={id}>
+                <Link to={`/projects/${id}`}>{name}</Link>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="menu-label">Info</p>
+        <ul className="menu-list">
+          <li>
+            <Link
+              to="/about"
+              activeProps={{ className: "active", "aria-current": "page" }}
+            >
+              About
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/contact"
+              activeProps={{ className: "active", "aria-current": "page" }}
+            >
+              Contact
+            </Link>
+          </li>
+        </ul>
       </aside>
 
-      <main className="column is-9 p-5">
-        <Header />
+      <main>
         <Outlet />
         <TanStackRouterDevtools />
       </main>

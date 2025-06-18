@@ -35,6 +35,10 @@
       "relation": "manyToMany",
       "target": "api::tag.tag",
       "mappedBy": "tasks"
+    },
+    "externalId": {
+      "type": "string",
+      "unique": true
     }
   }
 }

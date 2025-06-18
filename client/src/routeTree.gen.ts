@@ -14,8 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
-import { Route as TasksTaskIdTaskIdRouteImport } from './routes/tasks_/$taskId/$taskId'
-import { Route as ProjectsProjectIdBacklogRouteImport } from './routes/projects_/$projectId/backlog'
+import { Route as ProjectsProjectIdIndexRouteImport } from './routes/projects/$projectId/index'
 
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
@@ -42,45 +41,35 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   path: '/projects/$projectId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TasksTaskIdTaskIdRoute = TasksTaskIdTaskIdRouteImport.update({
-  id: '/tasks_/$taskId/$taskId',
-  path: '/tasks/$taskId/$taskId',
-  getParentRoute: () => rootRouteImport,
+const ProjectsProjectIdIndexRoute = ProjectsProjectIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProjectsProjectIdRoute,
 } as any)
-const ProjectsProjectIdBacklogRoute =
-  ProjectsProjectIdBacklogRouteImport.update({
-    id: '/projects_/$projectId/backlog',
-    path: '/projects/$projectId/backlog',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
   '/projects': typeof ProjectsIndexRoute
-  '/projects/$projectId/backlog': typeof ProjectsProjectIdBacklogRoute
-  '/tasks/$taskId/$taskId': typeof TasksTaskIdTaskIdRoute
+  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
   '/projects': typeof ProjectsIndexRoute
-  '/projects/$projectId/backlog': typeof ProjectsProjectIdBacklogRoute
-  '/tasks/$taskId/$taskId': typeof TasksTaskIdTaskIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/projects/$projectId': typeof ProjectsProjectIdRoute
+  '/projects/$projectId': typeof ProjectsProjectIdRouteWithChildren
   '/projects/': typeof ProjectsIndexRoute
-  '/projects_/$projectId/backlog': typeof ProjectsProjectIdBacklogRoute
-  '/tasks_/$taskId/$taskId': typeof TasksTaskIdTaskIdRoute
+  '/projects/$projectId/': typeof ProjectsProjectIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,17 +79,9 @@ export interface FileRouteTypes {
     | '/contact'
     | '/projects/$projectId'
     | '/projects'
-    | '/projects/$projectId/backlog'
-    | '/tasks/$taskId/$taskId'
+    | '/projects/$projectId/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/about'
-    | '/contact'
-    | '/projects/$projectId'
-    | '/projects'
-    | '/projects/$projectId/backlog'
-    | '/tasks/$taskId/$taskId'
+  to: '/' | '/about' | '/contact' | '/projects' | '/projects/$projectId'
   id:
     | '__root__'
     | '/'
@@ -108,18 +89,15 @@ export interface FileRouteTypes {
     | '/contact'
     | '/projects/$projectId'
     | '/projects/'
-    | '/projects_/$projectId/backlog'
-    | '/tasks_/$taskId/$taskId'
+    | '/projects/$projectId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  ProjectsProjectIdRoute: typeof ProjectsProjectIdRoute
+  ProjectsProjectIdRoute: typeof ProjectsProjectIdRouteWithChildren
   ProjectsIndexRoute: typeof ProjectsIndexRoute
-  ProjectsProjectIdBacklogRoute: typeof ProjectsProjectIdBacklogRoute
-  TasksTaskIdTaskIdRoute: typeof TasksTaskIdTaskIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -159,31 +137,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsProjectIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tasks_/$taskId/$taskId': {
-      id: '/tasks_/$taskId/$taskId'
-      path: '/tasks/$taskId/$taskId'
-      fullPath: '/tasks/$taskId/$taskId'
-      preLoaderRoute: typeof TasksTaskIdTaskIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/projects_/$projectId/backlog': {
-      id: '/projects_/$projectId/backlog'
-      path: '/projects/$projectId/backlog'
-      fullPath: '/projects/$projectId/backlog'
-      preLoaderRoute: typeof ProjectsProjectIdBacklogRouteImport
-      parentRoute: typeof rootRouteImport
+    '/projects/$projectId/': {
+      id: '/projects/$projectId/'
+      path: '/'
+      fullPath: '/projects/$projectId/'
+      preLoaderRoute: typeof ProjectsProjectIdIndexRouteImport
+      parentRoute: typeof ProjectsProjectIdRoute
     }
   }
 }
+
+interface ProjectsProjectIdRouteChildren {
+  ProjectsProjectIdIndexRoute: typeof ProjectsProjectIdIndexRoute
+}
+
+const ProjectsProjectIdRouteChildren: ProjectsProjectIdRouteChildren = {
+  ProjectsProjectIdIndexRoute: ProjectsProjectIdIndexRoute,
+}
+
+const ProjectsProjectIdRouteWithChildren =
+  ProjectsProjectIdRoute._addFileChildren(ProjectsProjectIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  ProjectsProjectIdRoute: ProjectsProjectIdRoute,
+  ProjectsProjectIdRoute: ProjectsProjectIdRouteWithChildren,
   ProjectsIndexRoute: ProjectsIndexRoute,
-  ProjectsProjectIdBacklogRoute: ProjectsProjectIdBacklogRoute,
-  TasksTaskIdTaskIdRoute: TasksTaskIdTaskIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

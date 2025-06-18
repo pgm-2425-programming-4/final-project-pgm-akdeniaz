@@ -1,12 +1,20 @@
 import { PAGE_SIZE_OPTIONS } from "../../../../constants/constants";
 
+type PaginationProps = {
+  currentPage: number;
+  pageCount: number;
+  pageSize: number;
+  onPageChanged: (pageNumber: number) => void;
+  onPageSizeChanged: (size: number) => void;
+};
+
 export function Pagination({
   currentPage,
   pageCount,
   pageSize,
   onPageChanged,
   onPageSizeChanged,
-}) {
+}: PaginationProps) {
   let pageNumberArray;
 
   if (pageCount <= 6) {
@@ -42,7 +50,7 @@ export function Pagination({
     if (pageNumber === null) {
       pageLinks.push(
         <li key={index}>
-          <span className="pagination-ellipsis">&hellip;</span>
+          <span className="pagination-ellipsis">…</span>
         </li>
       );
     } else {
@@ -82,15 +90,13 @@ export function Pagination({
       <div className="select" style={{ marginRight: "2rem" }}>
         <select
           defaultValue={pageSize}
-          onChange={(event) => onPageSizeChanged(event.target.value)}
+          onChange={(event) => onPageSizeChanged(Number(event.target.value))}
         >
-          {PAGE_SIZE_OPTIONS.map((pageSizeOption) => {
-            return (
-              <option value={pageSizeOption} key={pageSizeOption}>
-                {pageSizeOption} items per page
-              </option>
-            );
-          })}
+          {PAGE_SIZE_OPTIONS.map((pageSizeOption) => (
+            <option value={pageSizeOption} key={pageSizeOption}>
+              {pageSizeOption} items per page
+            </option>
+          ))}
         </select>
       </div>
       <ul className="pagination-list">{pageLinks}</ul>
