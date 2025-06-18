@@ -6,7 +6,7 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   return (
-    <div className="p-2">
+    <div>
       <h3>
         Welcome to my Kanban app! Please select an item from the navigation
         menu.
