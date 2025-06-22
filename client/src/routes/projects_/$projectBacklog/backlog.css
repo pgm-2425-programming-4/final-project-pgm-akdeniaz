@@ -1,0 +1,16 @@
+nav.pagination {
+  align-items: center;
+}
+
+ul.pagination-list li {
+  margin: 0;
+}
+
+li {
+  margin-bottom: 1rem;
+}
+
+.dark.about-paragraph,
+.dark.about-name {
+  color: #fff;
+}

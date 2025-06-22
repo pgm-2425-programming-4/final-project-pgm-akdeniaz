@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { useParams, Outlet, Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { useParams, Link } from "@tanstack/react-router";
 import { API_URL, API_TOKEN } from "../constants/constants.js";
+import AddTaskPopup from "./AddTaskPopup.jsx";
+import EditTaskPopup from "./EditTaskPopup.jsx";
 import "./ProjectDetail.css";
-
 import {
   createEntry,
-  updateEntry,
   deleteEntry,
 } from "../services/dataService.js";
 
@@ -18,24 +18,20 @@ async function getTaskStatusIdByName(name) {
   return json.data?.[0]?.id || null;
 }
 
-async function getProjectIdFromDocumentId(documentId) {
-  const res = await fetch(
-    `${API_URL}/projects?filters[documentId][$eq]=${documentId}`,
-    { headers: { Authorization: `Bearer ${API_TOKEN}` } }
-  );
-  const json = await res.json();
-  return json.data?.[0]?.id || null;
-}
-
 export function ProjectDetail() {
-  const { projectId } = useParams({ from: "/projects/$projectId" });
+  const { id } = useParams({ from: "/projects/$id" });
+
+  const [documentId, setDocumentId] = useState(null);
   const [projectName, setProjectName] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [statusColumns, setStatusColumns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterTag, setFilterTag] = useState("");
   const [search, setSearch] = useState("");
   const [tags, setTags] = useState([]);
   const [newCardText, setNewCardText] = useState({});
+  const [showAddPopup, setShowAddPopup] = useState(false);
+  const [editTask, setEditTask] = useState(null);
 
   const persistTasks = (updated) => {
     setTasks(updated);
@@ -45,66 +41,62 @@ export function ProjectDetail() {
     setTags(Array.from(allTags));
   };
 
-  const fetchTasksAndProject = async () => {
-    try {
-      const projectRes = await fetch(
-        `${API_URL}/projects?filters[documentId][$eq]=${projectId}`,
-        { headers: { Authorization: `Bearer ${API_TOKEN}` } }
-      );
-      const projectJson = await projectRes.json();
-      const project = projectJson.data?.[0];
-      setProjectName(
-        project?.project || project?.project || "Unknown Project"
-      );
-
-      const taskRes = await fetch(`${API_URL}/tasks?populate=*`, {
-        headers: { Authorization: `Bearer ${API_TOKEN}` },
-      });
-      const taskJson = await taskRes.json();
-
-      const filtered = taskJson.data
-        .filter((t) => {
-          if (t.projects?.documentId)
-            return t.projects.documentId === projectId;
-          const rel = t.projects?.data;
-          return (
-            Array.isArray(rel) &&
-            rel.some((p) => p.documentId === projectId)
-          );
-        })
-        .map((t) => ({
-          id: t.id,
-          documentId: t.documentId,
-          title: t.title,
-          description: t.description,
-          createdAt: t.createdAt,
-          updatedAt: t.updatedAt,
-          publishedAt: t.publishedAt,
-          task_status: t.task_status ?? { name: "Unknown" },
-          tags: t.tags ?? [],
-        }));
-
-      persistTasks(filtered);
-    } catch (err) {
-      console.error("Failed to fetch data:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetchTasks = useCallback(
+    async (docIdToUse = documentId) => {
+      try {
+        const taskRes = await fetch(
+          `${API_URL}/projects/${docIdToUse}?populate[tasks][populate][0]=tags&populate[tasks][populate][1]=task_status&populate[tasks][populate][2]=projects`,
+          { headers: { Authorization: `Bearer ${API_TOKEN}` } }
+        );
+        const taskJson = await taskRes.json();
+        const tasks = taskJson.data?.tasks || [];
+        persistTasks(tasks);
+      } catch (err) {
+        console.error("Failed to fetch tasks:", err);
+      }
+    },
+    [documentId]
+  );
 
   useEffect(() => {
-    fetchTasksAndProject();
-  }, [projectId]);
+    async function loadData() {
+      try {
+        const res = await fetch(`${API_URL}/projects?filters[id][$eq]=${id}`, {
+          headers: { Authorization: `Bearer ${API_TOKEN}` },
+        });
+        const json = await res.json();
+        const project = json.data?.[0];
+        if (!project) throw new Error("Project not found");
 
-  if (loading) return <p>Loading...</p>;
+        const docId = project.documentId;
+        setProjectName(project.project);
+        setDocumentId(docId);
 
-  const statusColumns = ["To do", "In progress", "Ready for review", "Done"];
+        const statusRes = await fetch(`${API_URL}/task-statuses`, {
+          headers: { Authorization: `Bearer ${API_TOKEN}` },
+        });
+        const statusJson = await statusRes.json();
+        const filteredStatuses = statusJson.data
+          .map((s) => s.name)
+          .filter((n) => n.toLowerCase() !== "backlog");
+        setStatusColumns(filteredStatuses);
+
+        await fetchTasks(docId);
+      } catch (err) {
+        console.error("loadData error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [id, fetchTasks]);
 
   const groupedTasks = statusColumns.map((status) => ({
     status,
     tasks: tasks.filter(
       (task) =>
-        task.task_status?.name === status &&
+        task.task_status?.name?.toLowerCase() === status.toLowerCase() &&
         (!filterTag || task.tags.some((tag) => tag.name === filterTag)) &&
         (!search || task.title.toLowerCase().includes(search.toLowerCase()))
     ),
@@ -115,120 +107,129 @@ export function ProjectDetail() {
     if (!title) return;
 
     const statusId = await getTaskStatusIdByName(status);
-    const projectStrapiId = await getProjectIdFromDocumentId(projectId);
-
-    if (!statusId || !projectStrapiId) {
-      alert("Failed to find project or status ID.");
+    if (!statusId || !id) {
+      alert("Missing status or project ID");
       return;
     }
 
     try {
-      const newTask = await createEntry("tasks", {
+      await createEntry("tasks", {
         title,
-        task_status: statusId,
-        projects: [projectStrapiId],
+        task_status: { connect: [{ id: statusId }] },
+        projects: { connect: [{ id: Number(id) }] },
       });
-      fetchTasksAndProject();
+      await fetchTasks();
     } catch (err) {
-      console.error("Failed to create task", err);
+      console.error("Failed to create task:", err);
     } finally {
       setNewCardText((prev) => ({ ...prev, [status]: "" }));
     }
   };
 
-  const handleDeleteTask = async (id) => {
+  const openEditPopup = (task) => setEditTask(task);
+
+  const handleDeleteTask = async (taskId) => {
     if (!window.confirm("❌ Delete this task?")) return;
     try {
-      await deleteEntry("tasks", id);
-      fetchTasksAndProject();
+      await deleteEntry("tasks", taskId);
+      await fetchTasks();
     } catch (err) {
       console.error("Failed to delete task", err);
     }
   };
 
-  const handleEditTask = async (task) => {
-    const newTitle = prompt("📝 Edit task title:", task.title);
-    if (!newTitle || newTitle === task.title) return;
-    try {
-      await updateEntry("tasks", task.id, { title: newTitle });
-      fetchTasksAndProject();
-    } catch (err) {
-      console.error("Failed to update task", err);
-    }
-  };
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="project-detail">
       <div className="header">
-        <div className="filters">
-          <select
-            className="filter-select"
-            value={filterTag}
-            onChange={(e) => setFilterTag(e.target.value)}
-          >
-            <option value="">All Tags</option>
-            {tags.map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
-          </select>
-          <input
-            className="search-input"
-            placeholder="Search by name"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <div className="header-left-row">
+          <div className="project-title">
+            Active project: {projectName}
+            <Link to={`/projects/${id}/backlog`} className="view-backlog-link">
+              View backlog
+            </Link>
+          </div>
+
+          <div className="filters">
+            <select
+              className="filter-select"
+              value={filterTag}
+              onChange={(e) => setFilterTag(e.target.value)}
+            >
+              <option value="">All Tags</option>
+              {tags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
+            </select>
+            <input
+              className="search-input"
+              placeholder="Search by name"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-        <h2 className="project-title">
-          Active project: {projectName}
-          <Link
-            to={`/projects/${projectId}/backlog`}
-            className="view-backlog-link"
-          >
-            View backlog
-          </Link>
-        </h2>
+
+        <div className="header-right">
+          <button className="open-popup" onClick={() => setShowAddPopup(true)}>
+            Add Nieuwe taak
+          </button>
+        </div>
       </div>
 
-      <main className="task-columns scrollable-columns">
-        {groupedTasks.map((column) => (
-          <div key={column.status} className="task-column">
-            <h3>{column.status}</h3>
-            {column.tasks.map((task) => (
-              <div key={task.id} className="task-card">
-                <p>{task.title}</p>
-                <div className="tags">
-                  {task.tags.map((tag) => (
-                    <span key={tag.id} className={`tag ${tag.name}`}>
-                      {tag.name}
-                    </span>
-                  ))}
+      {showAddPopup && (
+        <AddTaskPopup
+          onClose={() => setShowAddPopup(false)}
+          onTaskCreated={fetchTasks}
+        />
+      )}
+
+      {editTask && (
+        <EditTaskPopup
+          task={editTask}
+          onClose={() => setEditTask(null)}
+          onTaskUpdated={fetchTasks}
+        />
+      )}
+
+      <main className="task-columns-wrapper">
+        <div className="task-columns">
+          {groupedTasks.map((column) => (
+            <div key={column.status} className="task-column">
+              <h3>{column.status}</h3>
+              {column.tasks.map((task) => (
+                <div key={task.id} className="task-card">
+                  <p>{task.title}</p>
+                  <div className="tags">
+                    {task.tags.map((tag) => (
+                      <span key={tag.id} className={`tag ${tag.name}`}>
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    className="editTask"
+                    onClick={() => openEditPopup(task)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="deleteTask"
+                    onClick={() => handleDeleteTask(task.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
-                <button onClick={() => handleEditTask(task)}>📝</button>
-                <button onClick={() => handleDeleteTask(task.id)}>❌</button>
-              </div>
-            ))}
-            <input
-              value={newCardText[column.status] || ""}
-              onChange={(e) =>
-                setNewCardText({
-                  ...newCardText,
-                  [column.status]: e.target.value,
-                })
-              }
-              placeholder="New task title"
-            />
-            <button
-              className="add-card"
-              onClick={() => handleAddTask(column.status)}
-            >
-              ➕
-            </button>
+              ))}
+            </div>
+          ))}
+
+          <div className="task-column add-column">
+            <h3 className="add-column">+ Add another list</h3>
           </div>
-        ))}
-        <div className="task-column add-column">
-          <h3>+ Add another list</h3>
         </div>
       </main>
     </div>

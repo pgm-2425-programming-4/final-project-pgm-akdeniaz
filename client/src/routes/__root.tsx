@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { createRootRoute, Outlet, Link } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { API_URL, API_TOKEN } from "../constants/constants.js";
 
 export const Route = createRootRoute({
@@ -45,15 +44,27 @@ function RootLayout() {
         <p className="menu-label">Projects</p>
         <ul className="menu-list">
           {projects.map((project) => {
-            const id = project.documentId;
+            const id = project.id;
             const name = project.project;
-
             return (
               <li key={id}>
                 <Link to={`/projects/${id}`}>{name}</Link>
               </li>
             );
           })}
+        </ul>
+        <ul>
+          {projects.map((project) => {
+          return (
+            <Link
+            to={`/projects/${project.slug}`}
+            className="[&.is-active]:font-bold"
+            key={project.id}
+            >
+              {project.Title}
+            </Link>
+          );
+        })}
         </ul>
         <p className="menu-label">Info</p>
         <ul className="menu-list">
@@ -78,7 +89,6 @@ function RootLayout() {
 
       <main>
         <Outlet />
-        <TanStackRouterDevtools />
       </main>
     </div>
   );

@@ -1,5 +1,5 @@
 @import "../../routes/projects/_projectId.css";
-@import url("../../routes/projects/$projectId/backlog.css");
+@import url("../../routes/projects_/$projectBacklog/backlog.css");
 
 .wrapper {
   display: flex;

@@ -6,7 +6,7 @@ export const Route = createFileRoute("/about")({
 
 function About() {
   return (
-    <div className="p-2">
+    <div className="about-paragraph">
       <p>
         💻 Junior Web Developer | HTML, CSS, JavaScript | 🚀 Learning React &
         Strapi | 🌱 Building projects and growing every day

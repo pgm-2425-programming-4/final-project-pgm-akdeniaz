@@ -1,29 +1,39 @@
+/* === Base Styles === */
+html, body {
+  height: 100%;
+  font-family: Arial, sans-serif;
+  overflow: visible;
+  color: #000;
+}
+
 .project-detail {
   padding: 1rem;
-  font-family: Arial, sans-serif;
-  background-color: #e5efff;
   min-height: 100vh;
 }
 
+/* === Header Layout === */
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.project-title {
-  font-size: 1.25rem;
-  margin-top: 1rem;
+.header-left-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
 }
 
-.add-task-button {
-  background-color: #00aaff;
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+.project-title {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  white-space: nowrap;
 }
 
 .view-backlog-link {
@@ -31,10 +41,15 @@
   text-decoration: none;
 }
 
+.header-right {
+  flex-shrink: 0;
+}
+
+/* === Filters === */
 .filters {
   display: flex;
   gap: 1rem;
-  margin-bottom: 1rem;
+  flex-wrap: nowrap;
 }
 
 .filter-select,
@@ -44,10 +59,24 @@
   border: 1px solid #ccc;
 }
 
+/* === Task Columns === */
+.task-columns-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
 .task-columns {
   display: flex;
   gap: 1rem;
-  overflow-x: auto;
+  min-width: max-content;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.task-columns::-webkit-scrollbar {
+  height: 0;
 }
 
 .task-column {
@@ -60,18 +89,18 @@
 }
 
 .task-column h3 {
-  margin-top: 0;
+  margin-bottom: 1rem;
   font-size: 1rem;
   font-weight: bold;
-  margin-bottom: 1rem;
 }
 
+/* === Task Card === */
 .task-card {
   background: white;
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
 }
 
@@ -79,6 +108,7 @@
   transform: scale(1.01);
 }
 
+/* === Tags === */
 .tags {
   margin-top: 0.5rem;
   display: flex;
@@ -94,12 +124,14 @@
   color: white;
 }
 
-.tag.Back-end { background-color: #28a745; }    
-.tag.Front-end { background-color: #007bff; }    
-.tag.Infra { background-color: #fd7e14; }          
-.tag.Documentation { background-color: #ffc107; } 
-.tag.Design { background-color: #6f42c1; }          
+/* === Tag Colors === */
+.tag.Back-end     { background-color: #28a745; }
+.tag.Front-end    { background-color: #007bff; }
+.tag.Infra        { background-color: #fd7e14; }
+.tag.Documentation{ background-color: #ffc107; }
+.tag.Design       { background-color: #6f42c1; }
 
+/* === Buttons === */
 .task-card button {
   margin-top: 8px;
   padding: 4px 8px;
@@ -109,25 +141,98 @@
   border: none;
   background-color: #dee2e6;
 }
-.btn {
-  padding: 0.25rem 0.75rem;
-  border: none;
-  border-radius: 4px;
-  font-size: 0.8rem;
+
+.btn,
+.editTask,
+.deleteTask {
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid transparent;
   cursor: pointer;
-  margin: 0.25rem;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  margin-right: 6px;
 }
 
-.btn.edit { background-color: #ffc107; color: white; }
-.btn.delete { background-color: #dc3545; color: white; }
-.btn.confirm { background-color: #28a745; color: white; }
-.btn.cancel { background-color: #6c757d; color: white; }
+/* === Light Theme === */
+@media (prefers-color-scheme: light) {
+  .open-popup,
+  .add-column {
+    color: #007bff;
+    border-color: #007bff;
+    background-color: #fff;
+  }
 
-.add-card,
+  .open-popup:hover,
+  .add-column:hover {
+    background-color: #e6f0ff;
+  }
+
+  .editTask {
+    background-color: #ffc107;
+    color: #fff;
+    border-color: #e0a800;
+  }
+
+  .editTask:hover {
+    background-color: #e0a800;
+  }
+
+  .deleteTask {
+    background-color: #dc3545;
+    color: #fff;
+    border-color: #c82333;
+  }
+
+  .deleteTask:hover {
+    background-color: #c82333;
+  }
+}
+
+/* === Dark Theme === */
+@media (prefers-color-scheme: dark) {
+  .open-popup,
+  .add-column {
+    color: #66b3ff;
+    border-color: #66b3ff;
+    background-color: #1e1e1e;
+  }
+
+  .open-popup:hover,
+  .add-column:hover {
+    background-color: #2c2c2c;
+  }
+
+  .editTask {
+    background-color: #ffd860;
+    color: #000;
+    border-color: #e6b800;
+  }
+
+  .editTask:hover {
+    background-color: #e6b800;
+  }
+
+  .deleteTask {
+    background-color: #ff6b6b;
+    color: #000;
+    border-color: #cc4444;
+  }
+
+  .deleteTask:hover {
+    background-color: #cc4444;
+  }
+}
+
+/* === Utility === */
+.open-popup,
 .add-column {
-  color: #007bff;
-  font-size: 0.9rem;
-  cursor: pointer;
-  margin-top: 8px;
   display: inline-block;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid currentColor;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
