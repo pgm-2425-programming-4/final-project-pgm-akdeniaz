@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ProjectRoute } from "./$projectId";
+import { Route as ProjectRoute } from "../$projectId";
 import { API_URL, API_TOKEN } from "../../../constants/constants.js";
 
-export const BacklogRoute = createFileRoute({
+export const Route = createFileRoute("/projects/$projectId/backlog")({
   getParentRoute: () => ProjectRoute,
   path: "backlog",
   component: BacklogPage,
 });
 
 function BacklogPage() {
-  const { projectId } = BacklogRoute.useParams();
+  const { projectId } = Route.useParams();
   const [projectName, setProjectName] = useState("");
   const [loadingProject, setLoadingProject] = useState(true);
   const [tasks, setTasks] = useState<{ id: number; title: string }[]>([]);
@@ -27,9 +27,7 @@ function BacklogPage() {
           { headers: { Authorization: `Bearer ${API_TOKEN}` } }
         );
         const json = await res.json();
-        setProjectName(
-          json.data?.[0]?.project ?? "Unknown Project"
-        );
+        setProjectName(json.data?.[0]?.project ?? "Unknown Project");
       } catch {
         setProjectName("Unknown Project");
       } finally {
